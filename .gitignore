@@ -1,0 +1,6 @@
+.vagrant/
+output/*.iso
+
+cd_root/images/*
+cd_root/isolinux/*
+!cd_root/isolinux/*.cfg
