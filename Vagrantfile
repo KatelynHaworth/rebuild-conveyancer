@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
 
     echo "###### INSTALLING 3RD PARTY TOOLS"
     sudo apt-get -qq update
-    sudo apt-get -qq install unzip genisoimage genometools zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev libyajl2 build-essentials -y
+    sudo apt-get -qq install unzip genisoimage genometools zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev libyajl2 build-essential -y
     
     echo "###### DOWNLOADING SYSLINUX"
     mkdir -p /tmp/syslinux
