@@ -52,6 +52,18 @@ function buildRamDisk {
 	runCommand "cp /tmp/initrd.img /data/output/" "Copy initrd to output directory"
 }
 
+function buildISO {
+	logInfo "Building Testing ISO"
+	runCommand "mkdir -p /tmp/{syslinux,iso/{isolinux,kernel,images}}" "Build ISO file structure"
+	runCommand "cd /tmp/syslinux; wget -q https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.03.zip; unzip -o -q syslinux-6.03.zip" "Download and unpack syslinux"
+	runCommand "cd /tmp/iso; cp ../syslinux/bios/core/isolinux.bin ./isolinux/" "Copy ISOLinux binary into ISO file system"
+	runCommand "cd /tmp/iso; cp ../syslinux/bios/com32/elflink/ldlinux/ldlinux.c32 ./isolinux/" "Copy supporting files for ISOLinux"
+	runCommand "cp /data/output/initrd.img /tmp/iso/images/" "Copy initrd image onto the ISO"
+	runCommand "sudo cp /data/src/boot/vmlinuz /tmp/iso/kernel/vmlinuz" "Copy linux kernel onto the ISO"
+	runCommand "echo -e \"prompt 0\ndefault 1\n\nlabel 1\n    kernel /kernel/vmlinuz\n    append initrd=/images/initrd.img\" > /tmp/iso/isolinux/isolinux.cfg" "Add config for ISOLinux"
+	runCommand "mkisofs -o /data/output/rebuild.iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -V RebuildOS /tmp/iso" "Build ISO"
+}
+
 function showHelp() {
 	echo "Usage: ./build.sh [COMMAND]"
 	echo
@@ -61,6 +73,9 @@ function showHelp() {
 	echo -e "\tinstall-gems - Install all required ruby gems"
 	echo -e "\tbuild-ram-disk - Builds the initrd.img file from the source code"
 	echo -e "\tall - Runs all the above tasks in order"
+	echo
+	echo "Optional Commands:"
+        echo -e "\tbuild-iso - Builds an ISO for testing the initrd (See testing)"
 	echo
 	exit 0
 }
@@ -92,6 +107,10 @@ case $1 in
 		compileRuby
 		installGems
 		buildRamDisk
+		;;
+
+	"build-iso")
+		buildISO
 		;;
 
 	*)
